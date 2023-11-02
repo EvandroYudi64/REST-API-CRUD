@@ -1,4 +1,4 @@
-Base no postresql: TOCC8
+
 create table produto(
 codigo serial primary key,
 descricao varchar(100),
