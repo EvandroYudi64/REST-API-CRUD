@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title> Produtos</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+    <h1 style="text-align: center;">CONSUMIDOR API: CADASTRO DE PRODUTOS</h1>
+    <div class="form">
+        <form>
+            CÓDIGO:<br>
+            <input class="campo" type="number" id="codigo" /> <br />
+            DESCRIÇÂO:<br>
+            <input class="campo" type="text" id="descricao" /> <br />
+            PREÇO:<br>
+            <input class="campo" type="number" id="preco" /> <br /><br />
+            QUANTIDADE:<br>
+            <input class="campo" type="number" id="qtde" /> <br /><br />
+            <button type="button" id="salvar" onclick="salvar()" class="botao" >Gravar</button>
+            <button type="button" id="alterar" onclick="alterar()" class="botao" >Alterar</button>
+            <button type="button" id="remover" onclick="remover()" class="botao" >Remover</button>
+            <button type="button" id="listar" class="botao">Listar</button>
+        </form>
+    </div>
+    <br>
+    <div id="lista-produtos" class="container"><br></div>
+    
+
+    <script>
+        const BASE_URL = 'http://localhost:8080';
+        const headers = {
+            'Content-Type': 'application/json',
+        }
+
+        document.getElementById("salvar").addEventListener("click", function (event){
+            const descricao = document.getElementById("descricao").value;
+            const preco = parseFloat(document.getElementById("preco").value);
+            const qtde = parseInt(document.getElementById("qtde").value);
+
+            fetch(`${BASE_URL}/gravar`, {
+                method: 'POST',
+                headers,
+                body: JSON.stringify({descricao, preco, qtde }),
+            })
+            .then(data => {
+                alert("Produto adicionado com sucesso!");
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+            });
+        });
+
+        document.getElementById("listar").addEventListener("click", function (event){
+            fetch(`${BASE_URL}/produto`, {
+                method: 'GET',
+            })
+            .then(response => response.json())
+            .then(data => {
+                const listaProdutos = document.getElementById('lista-produtos');
+                listaProdutos.innerHTML = '';
+                data.forEach(produto => {
+                    listaProdutos.innerHTML += `<div class='item'>
+                                                <p>Codigo:${produto.codigo}</p>
+                                                <p>Descrição:${produto.descricao}</p>
+                                                <p>Preco:${produto.preco}</p>
+                                                <p>Quantidade:${produto.qtde}</p>
+                                                </div>`;
+                }
+                );
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+            });
+        });
+
+        document.getElementById("remover").addEventListener("click", function (event){
+            const codigo = document.getElementById("codigo").value;
+            fetch(`${BASE_URL}/deletar/${codigo}`, {
+                method: 'DELETE'
+            })
+            .then(data => {
+                console.log('aaaaaaaaaaa')
+                alert("Produto removido com sucesso!");
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+            });
+        });
+
+        document.getElementById("alterar").addEventListener("click", function (event){
+            const codigo = document.getElementById("codigo").value;
+            const descricao = document.getElementById("descricao").value;
+            const preco = parseFloat(document.getElementById("preco").value);
+            const qtde = parseInt(document.getElementById("qtde").value);
+            fetch(`${BASE_URL}/atualiza/${codigo}`, {
+                method: 'PUT',
+                headers,
+                body: JSON.stringify({descricao, preco, qtde}),
+            })
+            .then(data => {
+                alert("Produto alterado com sucesso!");
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+            });
+        });
+
+    </script>
+</body>
+</html>
